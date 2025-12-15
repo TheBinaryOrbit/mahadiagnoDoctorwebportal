@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 
@@ -29,12 +30,12 @@ const Slots = () => {
                 setStatusOptions(res.data);
             } else {
                 setError('Failed to fetch schedules');
-                window.alert('Failed to fetch schedules');
+                toast.error('Failed to fetch schedules');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Something went wrong';
             setError(errorMessage);
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsFetching(false);
         }
@@ -50,7 +51,7 @@ const Slots = () => {
                 setSlots(res.data.slots || res.data || []);
             } else {
                 setSlots([]);
-                window.alert('Failed to fetch slots');
+                toast.error('Failed to fetch slots');
             }
         } catch (error) {
             console.log('Error fetching slots:', error);
@@ -62,12 +63,12 @@ const Slots = () => {
 
     const handleAddSlot = async () => {
         if (!activeStatus?.id) {
-            window.alert('Please select a day first');
+            toast.error('Please select a day first');
             return;
         }
 
         if (!newSlot.startTime.trim() || !newSlot.endTime.trim()) {
-            window.alert('Please fill all fields');
+            toast.error('Please fill all fields');
             return;
         }
 
@@ -80,7 +81,7 @@ const Slots = () => {
         const endMinutes = timeToMinutes(newSlot.endTime);
 
         if (startMinutes >= endMinutes) {
-            window.alert('Start time must be before end time');
+            toast.error('Start time must be before end time');
             return;
         }
 
@@ -88,7 +89,7 @@ const Slots = () => {
         const dayEndMinutes = timeToMinutes(activeStatus.endTime);
 
         if (startMinutes < dayStartMinutes || endMinutes > dayEndMinutes) {
-            window.alert(`Time must be between ${activeStatus.startTime} - ${activeStatus.endTime}`);
+            toast.error(`Time must be between ${activeStatus.startTime} - ${activeStatus.endTime}`);
             return;
         }
 
@@ -104,7 +105,7 @@ const Slots = () => {
             const res = await axios.post(`${baseUrl}/slot/add`, slotData);
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Slot added successfully');
+                toast.success('Slot added successfully');
                 fetchSlots(activeStatus.id);
 
                 setNewSlot({
@@ -114,33 +115,29 @@ const Slots = () => {
                 });
                 setModalVisible(false);
             } else {
-                window.alert('Failed to add slot');
+                toast.error('Failed to add slot');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to add slot';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsAddingSlot(false);
         }
     };
 
     const handleDeleteSlot = async (slotId) => {
-        if (!window.confirm('Are you sure you want to delete this slot?')) {
-            return;
-        }
-
         try {
             const res = await axios.delete(`${baseUrl}/slot/delete/${slotId}`);
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Slot deleted successfully');
+                toast.success('Slot deleted successfully');
                 setSlots(prevSlots => prevSlots.filter(slot => slot.id !== slotId));
             } else {
-                window.alert('Failed to delete slot');
+                toast.error('Failed to delete slot');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to delete slot';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         }
     };
 

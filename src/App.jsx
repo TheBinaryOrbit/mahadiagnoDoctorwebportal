@@ -1,5 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import ProtectedRoute from './routes/ProtectedRoutes'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -14,7 +16,20 @@ import Videocall from './pages/Videocall'
 
 function App() {
   return (
-    <Router>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
@@ -40,6 +55,7 @@ function App() {
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </Router>
+    </>
   )
 }
 

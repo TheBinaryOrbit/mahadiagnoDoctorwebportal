@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 import { Edit } from 'lucide-react';
@@ -75,12 +76,12 @@ const Profile = () => {
                 localStorage.setItem('doctor', JSON.stringify(res.data));
             } else {
                 setError('Failed to fetch doctor details');
-                window.alert('Failed to fetch doctor details');
+                toast.error('Failed to fetch doctor details');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Something went wrong';
             setError(errorMessage);
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsFetching(false);
         }
@@ -88,7 +89,7 @@ const Profile = () => {
 
     const handleUpdateDoctor = async () => {
         if (!doctorForm.fName.trim() || !doctorForm.lName.trim() || !doctorForm.displayName.trim() || !doctorForm.email.trim()) {
-            window.alert('Please fill all fields');
+            toast.error('Please fill all fields');
             return;
         }
 
@@ -102,15 +103,15 @@ const Profile = () => {
             });
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Doctor details updated successfully');
+                toast.success('Doctor details updated successfully');
                 setModalVisible(false);
                 fetchDoctorDetails();
             } else {
-                window.alert('Failed to update doctor details');
+                toast.error('Failed to update doctor details');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to update doctor details';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsUpdating(false);
         }
@@ -118,7 +119,7 @@ const Profile = () => {
 
     const handleUpdateClinic = async () => {
         if (!clinicForm.clinicName.trim() || !clinicForm.clinicAddress.trim()) {
-            window.alert('Please fill all fields');
+            toast.error('Please fill all fields');
             return;
         }
 
@@ -130,15 +131,15 @@ const Profile = () => {
             });
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Clinic details updated successfully');
+                toast.success('Clinic details updated successfully');
                 setModalVisible(false);
                 fetchDoctorDetails();
             } else {
-                window.alert('Failed to update clinic details');
+                toast.error('Failed to update clinic details');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to update clinic details';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsUpdating(false);
         }
@@ -150,13 +151,13 @@ const Profile = () => {
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            window.alert('Please select an image file');
+            toast.error('Please select an image file');
             return;
         }
 
         // Validate file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
-            window.alert('Image size should be less than 5MB');
+            toast.error('Image size should be less than 5MB');
             return;
         }
 
@@ -172,14 +173,14 @@ const Profile = () => {
             });
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Profile image updated successfully');
+                toast.success('Profile image updated successfully');
                 fetchDoctorDetails();
             } else {
-                window.alert('Failed to update profile image');
+                toast.error('Failed to update profile image');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to update profile image';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsUploadingImage(false);
         }
@@ -204,7 +205,7 @@ const Profile = () => {
 
     const handleAddEducation = async () => {
         if (!newEducation.courseName.trim() || !newEducation.universityName.trim() || !newEducation.yearOfPassing.trim()) {
-            window.alert('Please fill all fields');
+            toast.error('Please fill all fields');
             return;
         }
 
@@ -217,38 +218,34 @@ const Profile = () => {
             });
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Education added successfully');
+                toast.success('Education added successfully');
                 const newEducationWithId = res.data.education || { ...newEducation, id: Date.now() };
                 setEducations(prevEducations => [...prevEducations, newEducationWithId]);
                 setNewEducation({ courseName: '', universityName: '', yearOfPassing: '' });
                 setModalVisible(false);
             } else {
-                window.alert('Failed to add education');
+                toast.error('Failed to add education');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to add education';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsUpdating(false);
         }
     };
 
     const handleDeleteEducation = async (educationId) => {
-        if (!window.confirm('Are you sure you want to delete this education?')) {
-            return;
-        }
-
         try {
             const res = await axios.delete(`${baseUrl}/education/delete/${educationId}/${doctor.id}`);
             if (res.status === 200 || res.status === 201) {
-                window.alert('Education deleted successfully');
+                toast.success('Education deleted successfully');
                 setEducations(prevEducations => prevEducations.filter(edu => edu.id !== educationId));
             } else {
-                window.alert('Failed to delete education');
+                toast.error('Failed to delete education');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to delete education';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         }
     };
 
@@ -271,12 +268,12 @@ const Profile = () => {
 
     const handleAddExperience = async () => {
         if (!newExperience.title.trim() || !newExperience.hospital.trim() || !newExperience.employmentType.trim() || !newExperience.from.trim()) {
-            window.alert('Please fill all required fields');
+            toast.error('Please fill all required fields');
             return;
         }
 
         if (!newExperience.currentlyWorking && !newExperience.to.trim()) {
-            window.alert('Please specify end date or mark as currently working');
+            toast.error('Please specify end date or mark as currently working');
             return;
         }
 
@@ -297,7 +294,7 @@ const Profile = () => {
             const res = await axios.post(`${baseUrl}/experience/add/${doctor.id}`, experienceData);
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Experience added successfully');
+                toast.success('Experience added successfully');
                 const newExperienceWithId = res.data.experience || { ...experienceData, id: Date.now() };
                 setExperiences(prevExperiences => [...prevExperiences, newExperienceWithId]);
                 setNewExperience({
@@ -310,32 +307,28 @@ const Profile = () => {
                 });
                 setModalVisible(false);
             } else {
-                window.alert('Failed to add experience');
+                toast.error('Failed to add experience');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to add experience';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsUpdating(false);
         }
     };
 
     const handleDeleteExperience = async (experienceId) => {
-        if (!window.confirm('Are you sure you want to delete this experience?')) {
-            return;
-        }
-
         try {
             const res = await axios.delete(`${baseUrl}/experience/delete/${experienceId}/${doctor.id}`);
             if (res.status === 200 || res.status === 201) {
-                window.alert('Experience deleted successfully');
+                toast.success('Experience deleted successfully');
                 setExperiences(prevExperiences => prevExperiences.filter(exp => exp.id !== experienceId));
             } else {
-                window.alert('Failed to delete experience');
+                toast.error('Failed to delete experience');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to delete experience';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         }
     };
 

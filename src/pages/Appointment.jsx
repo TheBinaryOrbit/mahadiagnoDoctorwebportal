@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,7 +40,7 @@ const Appointment = ({status}) => {
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
-            window.alert('Failed to fetch appointments');
+            toast.error('Failed to fetch appointments');
             setAppointments([]);
         } finally {
             setLoading(false);
@@ -93,20 +94,18 @@ const Appointment = ({status}) => {
     };
 
     const handleStatusUpdate = (appointmentId, newStatus) => {
-        if (window.confirm(`Are you sure you want to mark this appointment as ${newStatus}?`)) {
-            updateAppointmentStatus(appointmentId, newStatus);
-        }
+        updateAppointmentStatus(appointmentId, newStatus);
     };
 
     const updateAppointmentStatus = async (appointmentId, newStatus) => {
         try {
             // You can implement status update API call here
-            window.alert(`Appointment ${newStatus.toLowerCase()}`);
+            toast.success(`Appointment ${newStatus.toLowerCase()}`);
             // Refresh appointments after update
             fetchAppointments();
         } catch (error) {
             console.error('Error updating appointment status:', error);
-            window.alert('Failed to update appointment status');
+            toast.error('Failed to update appointment status');
         }
     };
 

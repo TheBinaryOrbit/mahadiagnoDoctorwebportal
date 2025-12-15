@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
 import LeftLogin from "../components/LeftLogin";
 import LeftOtpForm from "../components/LeftOtpForm";
 import img from '../assets/logo.png'
@@ -23,7 +24,7 @@ export default function Login() {
 
     const handleGetOtp = async () => {
         if (!/^\d{10}$/.test(phoneNumber)) {
-            window.alert('Please enter a valid 10-digit phone number');
+            toast.error('Please enter a valid 10-digit phone number');
             return;
         }
         setIsLoading(true);
@@ -33,15 +34,15 @@ export default function Login() {
             });
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('OTP sent successfully!');
+                toast.success('OTP sent successfully!');
                 setScreen("otp");
             } else {
-                window.alert('Failed to send OTP. Please try again.');
+                toast.error('Failed to send OTP. Please try again.');
             }
         } catch (error) {
             console.error('Error during get OTP:', error);
             const msg = error?.response?.data?.error || error.message || 'Server error';
-            window.alert(msg);
+            toast.error(msg);
         } finally {
             setIsLoading(false);
         }
@@ -50,7 +51,7 @@ export default function Login() {
     const handleLogin = async () => {
         const otpStr = otp.join("");
         if (!/^\d{6}$/.test(otpStr)) {
-            window.alert('Please enter a 6-digit OTP');
+            toast.error('Please enter a 6-digit OTP');
             return;
         }
         setIsLoading(true);
@@ -62,18 +63,18 @@ export default function Login() {
 
             if (res.status === 200 || res.status === 201) {
                 console.log('Login successful:', res.data.doctor);
-                window.alert('Login successful!');
+                toast.success('Login successful!');
                 localStorage.setItem('doctor', JSON.stringify(res.data.doctor));
                 localStorage.setItem('isLoggedIn', JSON.stringify(true));
                 
                 navigate('/dashboard');
             } else {
-                window.alert('Login failed. Please check your credentials.');
+                toast.error('Login failed. Please check your credentials.');
             }
         } catch (error) {
             console.error('Error during login:', error);
             const msg = error?.response?.data?.error || error.message || 'Server error';
-            window.alert(msg);
+            toast.error(msg);
         } finally {
             setIsLoading(false);
         }

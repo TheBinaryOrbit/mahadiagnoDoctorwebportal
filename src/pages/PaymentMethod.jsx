@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 
@@ -43,7 +44,7 @@ const PaymentMethod = () => {
             } else {
                 const errorMessage = error.response?.data?.error || error.message || 'Something went wrong';
                 setError(errorMessage);
-                window.alert(errorMessage);
+                toast.error(errorMessage);
             }
         } finally {
             setIsFetching(false);
@@ -53,20 +54,20 @@ const PaymentMethod = () => {
     const handleAddPaymentMethod = async () => {
         // Validation
         if (!bankForm.bankName.trim() || !bankForm.accountNumber.trim() || !bankForm.ifscCode.trim() || !bankForm.bankeeName.trim()) {
-            window.alert('Please fill all fields');
+            toast.error('Please fill all fields');
             return;
         }
 
         // Basic IFSC validation
         const ifscPattern = /^[A-Z]{4}[0][A-Z0-9]{6}$/;
         if (!ifscPattern.test(bankForm.ifscCode.toUpperCase())) {
-            window.alert('Please enter a valid IFSC code');
+            toast.error('Please enter a valid IFSC code');
             return;
         }
 
         // Account number validation
         if (!/^\d{9,18}$/.test(bankForm.accountNumber)) {
-            window.alert('Please enter a valid account number (9-18 digits)');
+            toast.error('Please enter a valid account number (9-18 digits)');
             return;
         }
 
@@ -83,7 +84,7 @@ const PaymentMethod = () => {
             const res = await axios.post(`${baseUrl}/paymentmethod/add`, paymentData);
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Payment method added successfully');
+                toast.success('Payment method added successfully');
                 
                 setBankForm({
                     bankName: '',
@@ -94,11 +95,11 @@ const PaymentMethod = () => {
                 
                 fetchPaymentDetails();
             } else {
-                window.alert('Failed to add payment method');
+                toast.error('Failed to add payment method');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to add payment method';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsAdding(false);
         }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 
@@ -36,12 +37,12 @@ const Timing = () => {
                 setTimings(validTimings);
             } else {
                 setError('Failed to fetch timings');
-                window.alert('Failed to fetch timings');
+                toast.error('Failed to fetch timings');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Something went wrong';
             setError(errorMessage);
-            window.alert(errorMessage);
+            toast.error(errorMessage);
             setTimings([]);
         } finally {
             setIsFetching(false);
@@ -53,7 +54,7 @@ const Timing = () => {
 
         if (updatedTiming.isAvailable) {
             if (!updatedTiming.startTime.trim() || !updatedTiming.endTime.trim()) {
-                window.alert('Please fill start and end time for available days');
+                toast.error('Please fill start and end time for available days');
                 setIsLoading(false);
                 return;
             }
@@ -74,7 +75,7 @@ const Timing = () => {
             const res = await axios.put(`${baseUrl}/timing/update/${doctor.id}`, timingData);
 
             if (res.status === 200 || res.status === 201) {
-                window.alert('Timing updated successfully');
+                toast.success('Timing updated successfully');
 
                 setTimings(prevTimings =>
                     prevTimings.map(timing =>
@@ -87,11 +88,11 @@ const Timing = () => {
                 setModalVisible(false);
                 setSelectedTiming(null);
             } else {
-                window.alert('Failed to update timing');
+                toast.error('Failed to update timing');
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.message || 'Failed to update timing';
-            window.alert(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

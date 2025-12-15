@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 import { Phone } from 'lucide-react';
@@ -43,7 +44,7 @@ const AppointmentDetail = () => {
             }
         } catch (error) {
             console.error('Error fetching appointment details:', error);
-            window.alert('Failed to fetch appointment details');
+            toast.error('Failed to fetch appointment details');
         } finally {
             setLoading(false);
         }
@@ -170,12 +171,12 @@ const AppointmentDetail = () => {
             });
 
             if (response.status === 200) {
-                window.alert('Appointment Accepted successfully');
+                toast.success('Appointment Accepted successfully');
                 fetchAppointmentDetails();
             }
         } catch (error) {
             console.error('Error Accepting appointment status:', error);
-            window.alert('Failed to Accept appointment status');
+            toast.error('Failed to Accept appointment status');
         } finally {
             setUpdating(false);
         }
@@ -188,12 +189,12 @@ const AppointmentDetail = () => {
             const response = await axios.patch(`${baseUrl}/doctorappointment/reject/${id}/${doctor.id}`);
 
             if (response.status === 200) {
-                window.alert('Appointment Rejected successfully');
+                toast.success('Appointment Rejected successfully');
                 fetchAppointmentDetails();
             }
         } catch (error) {
             console.error('Error Rejected appointment status:', error);
-            window.alert('Failed to Rejected appointment status');
+            toast.error('Failed to Rejected appointment status');
         } finally {
             setUpdating(false);
         }
@@ -206,12 +207,12 @@ const AppointmentDetail = () => {
             const response = await axios.patch(`${baseUrl}/doctorappointment/in-progress/${id}/${doctor.id}`);
 
             if (response.status === 200) {
-                window.alert('Appointment In Progress successfully');
+                toast.success('Appointment In Progress successfully');
                 fetchAppointmentDetails();
             }
         } catch (error) {
             console.error('Error In Progress appointment status:', error);
-            window.alert('Failed to In Progress appointment status');
+            toast.error('Failed to In Progress appointment status');
         } finally {
             setUpdating(false);
         }
@@ -224,12 +225,12 @@ const AppointmentDetail = () => {
             const response = await axios.patch(`${baseUrl}/doctorappointment/complete/${id}/${doctor.id}`);
 
             if (response.status === 200) {
-                window.alert('Appointment Completed successfully');
+                toast.success('Appointment Completed successfully');
                 fetchAppointmentDetails();
             }
         } catch (error) {
             console.error('Error Completing appointment status:', error);
-            window.alert('Failed to Complete appointment status');
+            toast.error('Failed to Complete appointment status');
         } finally {
             setUpdating(false);
         }
@@ -246,7 +247,7 @@ const AppointmentDetail = () => {
                 }
             });
         } else {
-            window.alert('Video call not available for this appointment');
+            toast.error('Video call not available for this appointment');
         }
     };
 
@@ -285,15 +286,15 @@ const AppointmentDetail = () => {
             );
 
             if (response.status === 200 || response.status === 201) {
-                window.alert('Prescription uploaded successfully');
+                toast.success('Prescription uploaded successfully');
                 setPrescriptionModal(false);
                 fetchAppointmentDetails();
             } else {
-                window.alert('Failed to upload prescription');
+                toast.error('Failed to upload prescription');
             }
         } catch (error) {
             console.error('Error uploading prescription:', error);
-            window.alert('Failed to upload prescription');
+            toast.error('Failed to upload prescription');
         } finally {
             setUploading(false);
         }
@@ -314,7 +315,7 @@ const AppointmentDetail = () => {
             }
         } catch (error) {
             console.error('Error fetching slots:', error);
-            window.alert('Failed to load available slots');
+            toast.error('Failed to load available slots');
         } finally {
             setLoadingSlots(false);
         }
@@ -322,7 +323,7 @@ const AppointmentDetail = () => {
 
     const handleReschedule = async () => {
         if (!selectedSlot) {
-            window.alert('Please select a time slot');
+            toast.error('Please select a time slot');
             return;
         }
 
@@ -337,16 +338,16 @@ const AppointmentDetail = () => {
             );
 
             if (response.status === 200 || response.status === 201) {
-                window.alert('Appointment rescheduled successfully');
+                toast.success('Appointment rescheduled successfully');
                 setRescheduleModalOpen(false);
                 setSelectedSlot('');
                 fetchAppointmentDetails();
             } else {
-                window.alert('Failed to reschedule appointment');
+                toast.error('Failed to reschedule appointment');
             }
         } catch (error) {
             console.error('Error rescheduling appointment:', error);
-            window.alert('Failed to reschedule appointment');
+            toast.error('Failed to reschedule appointment');
         } finally {
             setUpdating(false);
         }

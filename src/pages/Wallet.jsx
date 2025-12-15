@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import baseUrl from '../utils/baseUrl';
 import { useGetDoctor } from '../hooks/useGetDoctor';
 
@@ -21,7 +22,7 @@ const Wallet = () => {
             setHistory(res.data.history || []);
         } catch (error) {
             console.error('Error fetching wallet data:', error);
-            window.alert('Failed to fetch wallet data');
+            toast.error('Failed to fetch wallet data');
         } finally {
             setLoading(false);
         }
@@ -29,7 +30,7 @@ const Wallet = () => {
 
     const handleWithdrawal = () => {
         if (amount <= 0) {
-            window.alert('Insufficient balance for withdrawal');
+            toast.error('Insufficient balance for withdrawal');
             return;
         }
         setShowWithdrawModal(true);
@@ -39,12 +40,12 @@ const Wallet = () => {
         const withdrawAmountNum = parseInt(withdrawAmount);
 
         if (!withdrawAmount || withdrawAmountNum <= 0 || isNaN(withdrawAmountNum)) {
-            window.alert('Please enter a valid withdrawal amount');
+            toast.error('Please enter a valid withdrawal amount');
             return;
         }
 
         if (withdrawAmountNum > amount) {
-            window.alert('Withdrawal amount cannot exceed available balance');
+            toast.error('Withdrawal amount cannot exceed available balance');
             return;
         }
 
@@ -58,16 +59,16 @@ const Wallet = () => {
             const res = await axios.post(`${baseUrl}/withdraw/add`, withdrawalData);
 
             if (res.status === 201 || res.status === 200) {
-                window.alert('Withdrawal request submitted successfully');
+                toast.success('Withdrawal request submitted successfully');
                 setShowWithdrawModal(false);
                 setWithdrawAmount('');
                 fetchWalletData();
             } else {
-                window.alert('Failed to submit withdrawal request');
+                toast.error('Failed to submit withdrawal request');
             }
         } catch (error) {
             console.error('Error processing withdrawal:', error);
-            window.alert('Failed to process withdrawal request');
+            toast.error('Failed to process withdrawal request');
         } finally {
             setLoading(false);
         }

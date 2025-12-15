@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, addDoc, getDocs, deleteDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../config/firebase';
@@ -50,7 +51,7 @@ const Videocall = () => {
       callInitialized.current = true;
       initiateCall(callId);
     } else {
-      window.alert("No Call ID was provided.");
+      toast.error("No Call ID was provided.");
       navigate(-1);
       return;
     }
@@ -206,7 +207,7 @@ const Videocall = () => {
       return stream;
     } catch (error) {
       console.error("Error getting media stream:", error);
-      window.alert("Could not access camera or microphone. Please grant permissions.");
+      toast.error("Could not access camera or microphone. Please grant permissions.");
       return null;
     }
   };
@@ -305,7 +306,7 @@ const Videocall = () => {
       // Only end call on permanent failures, not temporary disconnections
       if (state === 'failed' || state === 'closed') {
         console.log('Connection permanently failed or closed');
-        window.alert('Video Call Ended');
+        toast.info('Video Call Ended');
         navigate(-1);
       } else if (state === 'disconnected') {
         console.log('Connection temporarily disconnected, waiting for reconnection...');
@@ -403,7 +404,7 @@ const Videocall = () => {
       
       // Show specific error message
       const errorMsg = e.message || 'Unknown error occurred';
-      window.alert('Failed to initiate call: ' + errorMsg + '\n\nPlease check:\n- Camera/microphone permissions\n- Firebase configuration\n- Internet connection');
+      toast.error(`Failed to initiate call: ${errorMsg}. Please check camera/microphone permissions, Firebase configuration, and internet connection.`);
       
       // Navigate back after showing error
       setTimeout(() => navigate(-1), 100);
